@@ -1,0 +1,239 @@
+<!DOCTYPE HTML>
+<!--
+	Snapshot by TEMPLATED
+	templated.co @templatedco
+	Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+<head>
+	<title>Project Riding Diary</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<link rel="stylesheet" href="assets/css/main.css" />
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+
+	<script type="text/javascript">
+
+		function posting() {
+			let date = $('#posting-date').val();
+			let from = $('#posting-from').val();
+			let to = $('#posting-to').val();
+			let distance = $('posting-distance').val();
+			let image = $('FILE_TAG').val();
+
+			$.ajax({
+				type: "POST",
+                url: "http://", 
+                data: { date_give:date, from_give:from, to_give:to, distance_give:distance, image_give:image },
+                success: function(response){
+                	if(response['result'] == 'success'){
+                		alert('Updated!');
+                		window.location.reload();
+                	}
+                }
+            })
+		}
+
+		$(document).ready(function(){
+			$('#diary').html('');
+			listing();
+		});
+
+		function listing() {
+			$.ajax({
+				type: "GET",
+				url: "http://",
+				data: {},
+				success: function(response){
+					if (response['result'] == 'success') {
+						let record = response['record'];
+						for (let i = 0; i < record.length; i++) {
+							make_gallery(record[i]['date'],record[i]['from'],record[i]['to'],record[i]['distance'],record[i]['image'])
+						}
+					} 
+				}
+			})
+		}
+
+		function make_gallery(date, from, to, distance, image) {
+			let temp_html = '<div class="gallery">\
+			<img class="image" src="'+image+'" alt="">\
+			<div class="image">\
+			<p class="date">'+date+'</p>\
+			<p class="from">'+from+'</p>\
+			<p class="to">'+to+'</p>\
+			<p class="distance">'+distance+'</p>\
+			</div>\
+			</div>';
+			$('#diary').append(temp_html);
+		}
+
+		function uploadFile(){
+			var form = $('#FILE_FORM')[0];
+			var formData = new FormData(form);
+			formData.append("fileObj", $("#FILE_TAG")[0].files[0]);
+
+
+			$.ajax({
+				url: '',
+				processData: false,
+				contentType: false,
+				data: formData,
+				type: 'POST',
+				success: function(result){
+					alert("Uploaded");
+				}
+			});
+		}
+
+
+
+
+</script>
+
+<style type="text/css">
+.image { position:relative;text-align:center;color:#FFFFFF; }
+.image div { position: absolute;top:50%;left:50%;transform: translate(-50%, -50%); background-color:#FFFFFF;text-shadow: -1px 0 1px black, 0 1px 1px black, 1px 0 1px black, 0 -1px 1px black; }
+
+
+
+</style>
+</head>
+<body>
+	<div class="page-wrap">
+
+		<!-- Nav -->
+		<nav id="nav">
+			<ul>
+				<li><a href="index.html" class="active"><span class="icon fa-home"></span></a></li>
+				<li><a href="gallery.html"><span class="icon fa-camera-retro"></span></a></li>
+				
+			</ul>
+		</nav>
+
+		<!-- Main -->
+		<section id="main">
+
+			<!-- Banner -->
+			<section id="banner">
+				<div class="inner">
+					<h1>Hey, How was your Ride today!</h1>
+					
+					<form>
+						<div class="form-group row">
+							<label for="inputDate">Date :</label>
+							
+							<input type="date" class="form-control" id="posting-date" >
+							
+						</div>
+						<div class="form-group row">
+							<label for="inputFrom">Starting Point :</label>
+							
+							<input type="address" class="form-control" id="posting-from" >
+							
+						</div>
+						<div class="form-group row">
+							<label for="inputTo">Return Point :</label>
+							
+							<input type="address" class="form-control" id="posting-to" >
+							
+						</div>
+						<div class="form-group row">
+							<label for="inputDistance">Distance :</label>
+							
+							<input type="distance" class="form-control" id="posting-distance" >
+							
+						</div>	
+					</form>
+
+					<form id="FILE_FORM" method="post" enctype="multipart/form-data" action="">
+						<input type="file" id="FILE_TAG" name="FILE_TAG">
+
+						<a class="ui-shadow ui-btn ui-corner-all" href="javascript:uploadFile();">Choose file</a>
+					</form>
+
+
+					
+					
+					<li><a onclick="posting()" href="#" class="btn btn-success">Submit</a></li>
+
+				</div>
+			</section>
+
+			<!-- Gallery -->
+			<section id="galleries">
+
+				<!-- Photo Galleries -->
+				<div class="gallery">
+					<header class="special">
+						<h2>Ride Diary</h2>
+					</header>
+					<div class="content" id="diary">
+						<div class="media">
+							<div class="image">
+							<a href="images/fulls/01.jpg"><img src="images/thumbs/01.jpg" alt="" title="This right here is a caption." /></a>
+							
+							<p align="center" class="date"></p>
+							<p align="center" class="from"></p>
+							<p align="center" class="to"></p>
+							<p align="center" class="distance"></p>
+							
+							</div>
+						</div>
+						<div class="media">
+							<div class="image">
+							<a href="images/fulls/05.jpg"><img src="images/thumbs/05.jpg" alt="" title="This right here is a caption." /></a>
+							</div>
+						
+						</div>
+						<div class="media">
+							<a href="images/fulls/09.jpg"><img src="images/thumbs/09.jpg" alt="" title="This right here is a caption." /></a>
+						</div>
+						<div class="media">
+							<a href="images/fulls/02.jpg"><img src="images/thumbs/02.jpg" alt="" title="This right here is a caption." /></a>
+						</div>
+						<div class="media">
+							<a href="images/fulls/06.jpg"><img src="images/thumbs/06.jpg" alt="" title="This right here is a caption." /></a>
+						</div>
+						<div class="media">
+							<a href="images/fulls/10.jpg"><img src="images/thumbs/10.jpg" alt="" title="This right here is a caption." /></a>
+						</div>
+						<div class="media">
+							<a href="images/fulls/03.jpg"><img src="images/thumbs/03.jpg" alt="" title="This right here is a caption." /></a>
+						</div>
+						<div class="media">
+							<a href="images/fulls/07.jpg"><img src="images/thumbs/07.jpg" alt="" title="This right here is a caption." /></a>
+						</div>
+					</div>
+					<footer>
+						<a href="gallery.html" class="button big">Full Gallery</a>
+					</footer>
+				</div>
+			</section>
+
+
+
+			<!-- Footer -->
+			<footer id="footer">
+				<div class="copyright">
+					&copy; Untitled Design: <a href="https://templated.co/">TEMPLATED</a>. Images: <a href="https://unsplash.com/">Unsplash</a>.
+				</div>
+			</footer>
+		</section>
+	</div>
+
+	<!-- Scripts -->
+	<script src="assets/js/jquery.min.js">
+	</script>
+	<script src="assets/js/jquery.poptrox.min.js"></script>
+	<script src="assets/js/jquery.scrolly.min.js"></script>
+	<script src="assets/js/skel.min.js"></script>
+	<script src="assets/js/util.js"></script>
+	<script src="assets/js/main.js"></script>
+
+</body>
+</html>
